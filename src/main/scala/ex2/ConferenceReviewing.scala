@@ -5,7 +5,7 @@ import ex2.Question.{Confidence, Final, Relevance}
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
-//trait è un'interfaccia
+//Exercise 2
 trait ConferenceReviewing:
   def loadReview(article: Int, relevance: Int, significance: Int, confidence: Int, fin: Int): Unit
   def orderedScores(article: Int, question: Question): List[Integer]
@@ -16,7 +16,6 @@ trait ConferenceReviewing:
 
 end ConferenceReviewing
 
-//enum può essere vista come un tipo di interfaccia in cui sono definiti tutti gli elementi utili
 enum Question:
   case Relevance
   case Significance
@@ -38,7 +37,7 @@ class ConferenceReviewingImpl extends  ConferenceReviewing {
     reviews.addOne(article, scores)
 
   override def orderedScores(article: Int, question: Question): List[Integer] =
-    reviews.filter(el => el._1 == article).flatMap(el => el._2.get(question)).sorted.toList //filtro sull'articolo e accedo al valore della chiave con flatmap o map (flatmap mi da i risultati in modo più pulito, riportando solo i numeri, ma è uguale a map)
+    reviews.filter(el => el._1 == article).flatMap(el => el._2.get(question)).sorted.toList
 
   override def averageFinalScore(article: Int): Double =
     val finalScores = reviews.filter(el => el._1 == article).flatMap(el => el._2.get(Final))
@@ -79,9 +78,4 @@ class ConferenceReviewingImpl extends  ConferenceReviewing {
     val totalAverageWeighted = (averageWeighted / scores.size).toDouble
     Map(article -> totalAverageWeighted)
 }
-
-
-
-
-
 
