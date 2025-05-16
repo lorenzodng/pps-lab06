@@ -3,44 +3,37 @@ package ex1
 import scala.annotation.tailrec
 import scala.language.postfixOps
 
-// List as a pure interface
+//Exercise 1
 enum List[A]:
-  case ::(h: A, t: List[A]) //:: è un costruttore, utile per creare una lista (non corrisponde a Cons, ma è un "metodo" di creazione)
+  case ::(h: A, t: List[A]) 
   case Nil()
-  def ::(h: A): List[A] = List.::(h, this) //il metodo crea una lista richiamando il costruttore
+  def ::(h: A): List[A] = List.::(h, this)
 
-  //restituisce la testa della lista
   def head: Option[A] = this match
-    case h :: t => Some(h) //sintassi sostitutiva a Cons(h, t), che indica l'esistenza di una lista
+    case h :: t => Some(h) 
     case _ => None
-
-  //restituisce la coda della lista
+ 
   def tail: Option[List[A]] = this match
     case h :: t => Some(t)
     case _ => None
 
-  //esegue una funzione void su tutti gli elementi della lista
   def foreach(consumer: A => Unit): Unit = this match
     case h :: t => consumer(h); t.foreach(consumer)
     case _ =>
 
-  //restituisce l'elemento della lista in una determinata posizione
   def get(pos: Int): Option[A] = this match
     case h :: t if pos == 0 => Some(h)
     case h :: t if pos > 0 => t.get(pos - 1)
     case _ => None
-
-  //compie un'operazione da sinistra verso destra sugli elementi della lista (init è il valore con cui il primo elemento viene sommato)
+  
   def foldLeft[B](init: B)(op: (B, A) => B): B = this match
-    case h :: t => t.foldLeft(op(init, h))(op) //prendo di volta in volta il risultato della funzione e lo eseguo con la testa
+    case h :: t => t.foldLeft(op(init, h))(op) 
     case _ => init
 
-  //compie un'operazione da destra verso sinistra sugli elementi della lista (init è il valore con cui l'ultimo elemento viene sommato)
   def foldRight[B](init: B)(op: (A, B) => B): B = this match
-    case h :: t => op(h, t.foldRight(init)(op)) //prendo di volta in volta il risultato della funzione e lo eseguo con la testa, a ritroso
+    case h :: t => op(h, t.foldRight(init)(op)) 
     case _ => init
 
-  //concatena due liste
   def append(list: List[A]): List[A] =
     foldRight(list)(_ :: _)
 
@@ -51,7 +44,6 @@ enum List[A]:
 
   def map[B](fun: A => B): List[B] = flatMap(a => fun(a) :: Nil())
 
-  //compie un'operazione da sinistra verso destra sugli elementi della lista (simile a foldLeft) con la differenza che non viene deciso il valore init
   def reduce(op: (A, A) => A): A = this match
     case Nil() => throw new IllegalStateException()
     case h :: t => t.foldLeft(h)(op)
@@ -62,11 +54,10 @@ enum List[A]:
     case _ => Nil()
 
   def zipWithValue2[B](value: B): List[(A, B)] =
-    //affinchè sia possibile utilizzare foldRight, devo specificare una funzione con lo stesso numero di parametri richiesti da foldRight. In particolare, ai fini del calcolo, mi è utile specificare:
-    def combine(head: A, acc: (List[(A, B)], B)): (List[(A, B)], B) = //head è l'elemento della lista; List[(...)] è la lista da generare man mano e B rappresenta il valore sempre uguale da raggruppare con head (devono essere per forza in questo ordine)
-      ((head, value) :: acc._1, value) //restituisco la coppia formata da: (lista aggiornata, valore comune)
+    def combine(head: A, acc: (List[(A, B)], B)): (List[(A, B)], B) = 
+      ((head, value) :: acc._1, value) 
 
-    foldRight((List[(A, B)](), value))(combine)._1 //alla fine restituisco solo il primo elemento di ogni tupla (lista(head, value), value) ottenuta dall'applicazione della funzione su ogni head (a combine vengono automaticamente passati gli argomenti)
+    foldRight((List[(A, B)](), value))(combine)._1 
 
   def length(): Int =
     @tailrec
@@ -112,7 +103,6 @@ enum List[A]:
 
     foldRight(List[A](), List[A]())(doPartition)
 
-  //si ferma al primo elemento che non rispetta il predicato anche se nella lista esistono elementi successivi che rispettano il predicato
   def span(predicate: A => Boolean): (List[A], List[A]) =
     @tailrec
     def doSpan(list1: List[A], list2: List[A], myList: List[A]): (List[A], List[A]) = myList match
@@ -176,7 +166,7 @@ enum List[A]:
 
 object List:
 
-  def apply[A](elems: A*): List[A] = //A* significa che apply può accettare 0 o più argomenti come parametri
+  def apply[A](elems: A*): List[A] =
     var list: List[A] = Nil()
     for e <- elems.reverse
       do list = e :: list
