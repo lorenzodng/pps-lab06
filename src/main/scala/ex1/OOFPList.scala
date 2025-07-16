@@ -67,7 +67,7 @@ enum List[A]:
 
     doLength(0, this)
 
-  def length2(): Int = foldLeft(0)((acc, head) => acc + 1)
+  def length2(): Int = this.foldLeft(0)((acc, head) => acc + 1)
 
   def zipWithIndex: List[(A, Int)] =
     def doZip(acc: Int)(list : List[A]) : List[(A, Int)] = list match
